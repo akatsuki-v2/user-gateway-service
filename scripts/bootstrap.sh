@@ -19,4 +19,5 @@ case $APP_COMPONENT in
 
   *)
     echo "'$APP_COMPONENT' is not a known value for APP_COMPONENT"
+    ;;
 esac
