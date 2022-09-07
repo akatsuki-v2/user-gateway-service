@@ -17,4 +17,4 @@ exec uvicorn \
     --port 80 \
     --no-access-log \
     $EXTRA_PARAMS \
-    app.http_boot:systemic
+    app.api_boot:api
