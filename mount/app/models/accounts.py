@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-from uuid import UUID
 
 from . import BaseModel
 from . import Status
@@ -17,8 +16,7 @@ class AccountInput(BaseModel):
 
 
 class Account(BaseModel):
-    rec_id: int
-    account_id: UUID
+    account_id: int
     username: str
     email_address: str
     country: str
