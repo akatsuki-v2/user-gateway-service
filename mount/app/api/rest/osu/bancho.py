@@ -13,9 +13,9 @@ SERVICE_URL = "http://bancho-service"
 
 @router.post("/")
 async def bancho(request: Request,
-                 cho_token: str | None = Header(None),
+                 osu_token: str | None = Header(None),
                  ctx: RequestContext = Depends()):
-    if cho_token is None:
+    if osu_token is None:
         # this is a login request from the osu! client
         response = await forward_request(ctx,
                                          method="POST",
@@ -26,7 +26,7 @@ async def bancho(request: Request,
         response = await forward_request(ctx,
                                          method="POST",
                                          url=f"{SERVICE_URL}/v1/",
-                                         headers={"cho-token": cho_token},
+                                         headers={"cho-token": osu_token},
                                          content=await request.body())
 
     return response
