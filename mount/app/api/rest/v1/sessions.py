@@ -9,7 +9,7 @@ from fastapi import Depends
 
 router = APIRouter()
 
-SERVICE_URL = "http://user-accounts-service"
+SERVICE_URL = "http://users-service"
 
 
 # https://osuakatsuki.atlassian.net/browse/V2-11
