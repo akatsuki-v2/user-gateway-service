@@ -25,7 +25,7 @@ async def bancho(request: Request,
         # this is a bancho request from the osu! client
         response = await forward_request(ctx,
                                          method="POST",
-                                         url=f"{SERVICE_URL}/v1/",
+                                         url=f"{SERVICE_URL}/v1/bancho",
                                          headers={"cho-token": osu_token},
                                          content=await request.body())
 
