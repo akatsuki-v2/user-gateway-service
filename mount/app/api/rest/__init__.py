@@ -47,6 +47,13 @@ def init_routes(api: FastAPI) -> None:
 
     api.include_router(v1_router)
 
+    # TODO: clean up this sacrilege
+    from .osu import bancho
+    from .osu.web import router as osu_web_router
+    for subdomain in ("c", "ce", "c4"):
+        api.host(f"{subdomain}.cmyui.xyz", bancho.router)
+    api.host("osu.cmyui.xyz", osu_web_router)
+
 
 def init_api():
     api = FastAPI()
