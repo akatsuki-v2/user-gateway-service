@@ -7,8 +7,8 @@ from . import BaseModel
 
 
 class LoginForm(BaseModel):
-    username: str
-    password: str
+    identifier: str
+    passphrase: str
     user_agent: str  # TODO: literal?
 
 
