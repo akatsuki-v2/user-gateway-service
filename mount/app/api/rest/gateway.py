@@ -2,6 +2,7 @@ from typing import Any
 from typing import Literal
 from typing import Mapping
 
+from app.common import logging
 from app.common.context import Context
 from app.common.json import preprocess_json
 from fastapi import Response
@@ -42,6 +43,9 @@ async def forward_request(ctx: Context,
                                              params=params,
                                              headers=headers,
                                              cookies=cookies)
+
+    logging.info("Forwarded HTTP request", method=method, url=url,
+                 status_code=response.status_code)
 
     return Response(content=response.content,
                     status_code=response.status_code,
