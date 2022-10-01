@@ -28,7 +28,6 @@ async def create_clan(args: CreateClan,
 # https://osuakatsuki.atlassian.net/browse/V2-21
 @router.get("/v1/clans/{clan_id}", response_model=Clan)
 async def get_clan(clan_id: int,
-                   session: Session = Depends(authentication),
                    ctx: RequestContext = Depends()):
     response = await forward_request(ctx,
                                      method="GET",
@@ -38,8 +37,7 @@ async def get_clan(clan_id: int,
 
 # https://osuakatsuki.atlassian.net/browse/V2-113
 @router.get("/v1/clans", response_model=list[Clan])
-async def get_all_clans(session: Session = Depends(authentication),
-                        ctx: RequestContext = Depends()):
+async def get_all_clans(ctx: RequestContext = Depends()):
     response = await forward_request(ctx,
                                      method="GET",
                                      url=f"{SERVICE_URL}/v1/clans")
