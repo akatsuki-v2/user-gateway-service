@@ -1,6 +1,7 @@
 from typing import Any
 from typing import Literal
 
+from app.api.rest.context import RequestContext
 from app.common import logging
 from app.common import settings
 from app.common.context import Context
@@ -30,7 +31,7 @@ oauth2_scheme = HTTPBearer()
 
 
 async def authentication(
-    ctx: Context,
+    ctx: RequestContext = Depends(),
     token: HTTPAuthorizationCredentials = Depends(oauth2_scheme),
 ) -> Session:
     response = await ctx.http_client.patch(
@@ -43,7 +44,7 @@ async def authentication(
                       status_code=response.status_code,
                       response_data=response_data)
         raise HTTPException(status_code=response.status_code,
-                            detail=response_data["detail"])
+                            detail=response_data)
 
     return Session(**response_data["data"])
 
