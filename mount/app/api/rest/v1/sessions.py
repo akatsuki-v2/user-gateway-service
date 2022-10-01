@@ -1,6 +1,5 @@
-from uuid import UUID
-
 from app.api.rest.context import RequestContext
+from app.api.rest.gateway import authentication
 from app.api.rest.gateway import forward_request
 from app.models.sessions import LoginForm
 from app.models.sessions import Session
@@ -23,8 +22,10 @@ async def log_in(args: LoginForm, ctx: RequestContext = Depends()):
 
 
 # https://osuakatsuki.atlassian.net/browse/V2-12
-@router.patch("/v1/sessions/{session_id}")
-async def partial_update_session(session_id: UUID, ctx: RequestContext = Depends()):
+@router.patch("/v1/sessions/self")
+async def partial_update_session(session: Session = Depends(authentication),
+                                 ctx: RequestContext = Depends()):
+    session_id = session.session_id
     response = await forward_request(ctx,
                                      method="PATCH",
                                      url=f"{SERVICE_URL}/v1/sessions/{session_id}")
@@ -32,8 +33,10 @@ async def partial_update_session(session_id: UUID, ctx: RequestContext = Depends
 
 
 # https://osuakatsuki.atlassian.net/browse/V2-13
-@router.delete("/v1/sessions/{session_id}")
-async def log_out(session_id: UUID, ctx: RequestContext = Depends()):
+@router.delete("/v1/sessions/self")
+async def log_out(session: Session = Depends(authentication),
+                  ctx: RequestContext = Depends()):
+    session_id = session.session_id
     response = await forward_request(ctx,
                                      method="DELETE",
                                      url=f"{SERVICE_URL}/v1/sessions/{session_id}")

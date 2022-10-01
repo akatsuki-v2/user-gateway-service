@@ -17,6 +17,7 @@ async def get_chat(chat_id: int, ctx: RequestContext = Depends()):
                                      url=f"{SERVICE_URL}/v1/chats/{chat_id}")
     return response
 
+
 # https://osuakatsuki.atlassian.net/browse/V2-83
 @router.get("/v1/chats", response_model=Chat)
 async def get_all_chats(ctx: RequestContext = Depends()):
