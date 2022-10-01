@@ -10,7 +10,7 @@ from fastapi import Depends
 
 router = APIRouter()
 
-SERVICE_URL = "http://chat-service"
+SERVICE_URL = "http://clans-service"
 
 
 # https://osuakatsuki.atlassian.net/browse/V2-20
