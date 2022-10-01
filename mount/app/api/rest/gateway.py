@@ -2,10 +2,10 @@ from typing import Any
 from typing import Literal
 
 from app.api.rest.context import RequestContext
+from app.common import json as jsonlib
 from app.common import logging
 from app.common import settings
 from app.common.context import Context
-from app.common.json import preprocess_json
 from app.models.sessions import Session
 from fastapi import Depends
 from fastapi import HTTPException
@@ -61,7 +61,7 @@ async def forward_request(ctx: Context,
                           cookies: CookieTypes | None = None,
                           ) -> Response:
     if json is not None:
-        json = preprocess_json(json)
+        json = jsonlib._default_processor(json)
 
     response = await ctx.http_client.request(method=method,
                                              content=content,
