@@ -1,6 +1,7 @@
 from app.api.rest.context import RequestContext
 from app.api.rest.gateway import authentication
 from app.api.rest.gateway import forward_request
+from app.api.rest.responses import Success
 from app.models.sessions import LoginForm
 from app.models.sessions import Session
 from fastapi import APIRouter
@@ -12,7 +13,7 @@ SERVICE_URL = "http://users-service"
 
 
 # https://osuakatsuki.atlassian.net/browse/V2-11
-@router.post("/v1/sessions", response_model=Session)
+@router.post("/v1/sessions", response_model=Success[Session])
 async def log_in(args: LoginForm, ctx: RequestContext = Depends()):
     response = await forward_request(ctx,
                                      method="POST",
@@ -22,7 +23,7 @@ async def log_in(args: LoginForm, ctx: RequestContext = Depends()):
 
 
 # https://osuakatsuki.atlassian.net/browse/V2-12
-@router.patch("/v1/sessions/self")
+@router.patch("/v1/sessions/self", response_model=Success[Session])
 async def partial_update_session(session: Session = Depends(authentication),
                                  ctx: RequestContext = Depends()):
     session_id = session.session_id
@@ -33,7 +34,7 @@ async def partial_update_session(session: Session = Depends(authentication),
 
 
 # https://osuakatsuki.atlassian.net/browse/V2-13
-@router.delete("/v1/sessions/self")
+@router.delete("/v1/sessions/self", response_model=Success[Session])
 async def log_out(session: Session = Depends(authentication),
                   ctx: RequestContext = Depends()):
     session_id = session.session_id

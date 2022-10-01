@@ -1,6 +1,7 @@
 from app.api.rest.context import RequestContext
 from app.api.rest.gateway import authentication
 from app.api.rest.gateway import forward_request
+from app.api.rest.responses import Success
 from app.models.accounts import Account
 from app.models.accounts import AccountUpdate
 from app.models.accounts import SignupForm
@@ -14,7 +15,7 @@ SERVICE_URL = "http://users-service"
 
 
 # https://osuakatsuki.atlassian.net/browse/V2-10
-@router.post("/v1/accounts", response_model=Account)
+@router.post("/v1/accounts", response_model=Success[Account])
 async def sign_up(args: SignupForm, ctx: RequestContext = Depends()):
     response = await forward_request(ctx,
                                      method="POST",
@@ -24,7 +25,7 @@ async def sign_up(args: SignupForm, ctx: RequestContext = Depends()):
 
 
 # https://osuakatsuki.atlassian.net/browse/V2-58
-@router.get("/v1/accounts/{account_id}", response_model=Account)
+@router.get("/v1/accounts/{account_id}", response_model=Success[Account])
 async def get_account(account_id: int, ctx: RequestContext = Depends()):
     response = await forward_request(ctx,
                                      method="GET",
@@ -33,7 +34,7 @@ async def get_account(account_id: int, ctx: RequestContext = Depends()):
 
 
 # https://osuakatsuki.atlassian.net/browse/V2-59
-@router.patch("/v1/accounts/self", response_model=Account)
+@router.patch("/v1/accounts/self", response_model=Success[Account])
 async def partial_update_account(args: AccountUpdate,
                                  session: Session = Depends(authentication),
                                  ctx: RequestContext = Depends()):

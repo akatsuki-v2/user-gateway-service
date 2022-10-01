@@ -1,5 +1,6 @@
 from app.api.rest.context import RequestContext
 from app.api.rest.gateway import forward_request
+from app.api.rest.responses import Success
 from app.models.chats import Chat
 from fastapi import APIRouter
 from fastapi import Depends
@@ -10,7 +11,7 @@ SERVICE_URL = "http://chat-service"
 
 
 # https://osuakatsuki.atlassian.net/browse/V2-82
-@router.get("/v1/chats/{chat_id}", response_model=Chat)
+@router.get("/v1/chats/{chat_id}", response_model=Success[Chat])
 async def get_chat(chat_id: int, ctx: RequestContext = Depends()):
     response = await forward_request(ctx,
                                      method="GET",
@@ -19,7 +20,7 @@ async def get_chat(chat_id: int, ctx: RequestContext = Depends()):
 
 
 # https://osuakatsuki.atlassian.net/browse/V2-83
-@router.get("/v1/chats", response_model=Chat)
+@router.get("/v1/chats", response_model=Success[Chat])
 async def get_all_chats(ctx: RequestContext = Depends()):
     response = await forward_request(ctx,
                                      method="GET",
