@@ -41,10 +41,9 @@ async def get_self_presence(session: Session = Depends(authentication),
 @router.get("/v1/presences", response_model=Success[list[Presence]])
 async def get_presences(session: Session = Depends(authentication),
                         ctx: RequestContext = Depends()):
-    session_id = session.session_id
     response = await forward_request(ctx,
                                      method="GET",
-                                     url=f"{SERVICE_URL}/v1/presences/{session_id}")
+                                     url=f"{SERVICE_URL}/v1/presences")
     return response
 
 
