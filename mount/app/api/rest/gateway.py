@@ -63,6 +63,8 @@ async def forward_request(ctx: Context,
     if json is not None:
         json = jsonlib._default_processor(json)
 
+    logging.info("Forwarding HTTP request", method=method, url=url)
+
     response = await ctx.http_client.request(method=method,
                                              content=content,
                                              data=data,
@@ -73,8 +75,12 @@ async def forward_request(ctx: Context,
                                              headers=headers,
                                              cookies=cookies)
 
-    logging.info("Forwarded HTTP request", method=method, url=url,
-                 status_code=response.status_code)
+    if response.status_code != 200:
+        logging.info("Core service returned non-200 code",
+                     method=method,
+                     url=url,
+                     status_code=response.status_code,
+                     response_data=response.json())
 
     return Response(content=response.content,
                     status_code=response.status_code,
