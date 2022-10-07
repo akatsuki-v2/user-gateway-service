@@ -7,7 +7,7 @@ from app.models.accounts import AccountUpdate
 from app.models.accounts import SignupForm
 from fastapi import APIRouter
 from fastapi import Depends
-from fastapi.security import HTTPAuthorizationCredentials
+from fastapi.security import HTTPAuthorizationCredentials as HTTPCredentials
 from fastapi.security import HTTPBearer
 
 router = APIRouter()
@@ -39,7 +39,7 @@ async def get_account(account_id: int, ctx: RequestContext = Depends()):
 # https://osuakatsuki.atlassian.net/browse/V2-59
 @router.patch("/v1/accounts/self", response_model=Success[Account])
 async def partial_update_account(args: AccountUpdate,
-                                 token: HTTPAuthorizationCredentials = Depends(
+                                 token: HTTPCredentials = Depends(
                                      oauth2_scheme),
                                  ctx: RequestContext = Depends()):
     session = await authenticate(ctx, token.credentials)
