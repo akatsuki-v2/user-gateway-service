@@ -1,17 +1,14 @@
 from typing import Any
 from typing import Literal
+from uuid import UUID
 
-from app.api.rest.context import RequestContext
 from app.common import json as jsonlib
 from app.common import logging
 from app.common import settings
 from app.common.context import Context
 from app.models.sessions import Session
-from fastapi import Depends
 from fastapi import HTTPException
 from fastapi import Response
-from fastapi.security import HTTPAuthorizationCredentials
-from fastapi.security import HTTPBearer
 from httpx._types import CookieTypes
 from httpx._types import HeaderTypes
 from httpx._types import QueryParamTypes
@@ -27,15 +24,9 @@ MethodTypes = Literal["POST", "PUT", "PATCH",
 # https://www.python-httpx.org/advanced
 
 
-oauth2_scheme = HTTPBearer()
-
-
-async def authentication(
-    ctx: RequestContext = Depends(),
-    token: HTTPAuthorizationCredentials = Depends(oauth2_scheme),
-) -> Session:
+async def authenticate(ctx: Context, session_id: UUID | str) -> Session:
     response = await ctx.http_client.patch(
-        url=f"http://users-service/v1/sessions/{token.credentials}",
+        url=f"http://users-service/v1/sessions/{session_id}",
         json={"ttl": settings.AUTH_SESSION_DURATION},
     )
     response_data = response.json()

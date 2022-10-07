@@ -1,15 +1,19 @@
 from app.api.rest.context import RequestContext
-from app.api.rest.gateway import authentication
+from app.api.rest.gateway import authenticate
 from app.api.rest.gateway import forward_request
 from app.api.rest.responses import Success
 from app.models.sessions import LoginForm
 from app.models.sessions import Session
 from fastapi import APIRouter
 from fastapi import Depends
+from fastapi.security import HTTPAuthorizationCredentials as HTTPCredentials
+from fastapi.security import HTTPBearer
 
 router = APIRouter()
 
 SERVICE_URL = "http://users-service"
+
+oauth2_scheme = HTTPBearer()
 
 
 # https://osuakatsuki.atlassian.net/browse/V2-11
@@ -23,9 +27,11 @@ async def log_in(args: LoginForm, ctx: RequestContext = Depends()):
 
 
 # https://osuakatsuki.atlassian.net/browse/V2-12
-@router.patch("/v1/sessions/self", response_model=Success[Session])
-async def partial_update_session(session: Session = Depends(authentication),
+@router.patch("/v1/sessions/self")
+async def partial_update_session(token: HTTPCredentials = Depends(oauth2_scheme),
                                  ctx: RequestContext = Depends()):
+    session = await authenticate(ctx, token.credentials)
+
     session_id = session.session_id
     response = await forward_request(ctx,
                                      method="PATCH",
@@ -34,9 +40,11 @@ async def partial_update_session(session: Session = Depends(authentication),
 
 
 # https://osuakatsuki.atlassian.net/browse/V2-13
-@router.delete("/v1/sessions/self", response_model=Success[Session])
-async def log_out(session: Session = Depends(authentication),
+@router.delete("/v1/sessions/self")
+async def log_out(token: HTTPCredentials = Depends(oauth2_scheme),
                   ctx: RequestContext = Depends()):
+    session = await authenticate(ctx, token.credentials)
+
     session_id = session.session_id
     response = await forward_request(ctx,
                                      method="DELETE",

@@ -1,17 +1,20 @@
 from app.api.rest.context import RequestContext
-from app.api.rest.gateway import authentication
+from app.api.rest.gateway import authenticate
 from app.api.rest.gateway import forward_request
 from app.api.rest.responses import Success
 from app.models.accounts import Account
 from app.models.accounts import AccountUpdate
 from app.models.accounts import SignupForm
-from app.models.sessions import Session
 from fastapi import APIRouter
 from fastapi import Depends
+from fastapi.security import HTTPAuthorizationCredentials
+from fastapi.security import HTTPBearer
 
 router = APIRouter()
 
 SERVICE_URL = "http://users-service"
+
+oauth2_scheme = HTTPBearer()
 
 
 # https://osuakatsuki.atlassian.net/browse/V2-10
@@ -36,8 +39,11 @@ async def get_account(account_id: int, ctx: RequestContext = Depends()):
 # https://osuakatsuki.atlassian.net/browse/V2-59
 @router.patch("/v1/accounts/self", response_model=Success[Account])
 async def partial_update_account(args: AccountUpdate,
-                                 session: Session = Depends(authentication),
+                                 token: HTTPAuthorizationCredentials = Depends(
+                                     oauth2_scheme),
                                  ctx: RequestContext = Depends()):
+    session = await authenticate(ctx, token.credentials)
+
     account_id = session.account_id
     response = await forward_request(ctx,
                                      method="PATCH",
