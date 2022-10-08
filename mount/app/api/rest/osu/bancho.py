@@ -23,6 +23,8 @@ async def bancho(request: Request,
                                          content=await request.body())
     else:
         # this is a bancho request from the osu! client
+        # NOTE: the bancho-service will perform authentication
+
         response = await forward_request(ctx,
                                          method="POST",
                                          url=f"{SERVICE_URL}/v1/bancho",
