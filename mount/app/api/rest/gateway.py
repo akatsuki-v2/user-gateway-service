@@ -66,12 +66,12 @@ async def forward_request(ctx: Context,
                                              headers=headers,
                                              cookies=cookies)
 
-    if response.status_code != 200:
-        logging.info("Core service returned non-200 code",
-                     method=method,
-                     url=url,
-                     status_code=response.status_code,
-                     response_data=response.json())
+    if response.status_code >= 500:
+        logging.error("Core service internal server error",
+                      method=method,
+                      url=url,
+                      status_code=response.status_code,
+                      response_data=response.json())  # TODO: aread?
 
     return Response(content=response.content,
                     status_code=response.status_code,
