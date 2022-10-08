@@ -24,7 +24,9 @@ class Action(IntEnum):
 class Presence(BaseModel):
     session_id: UUID
     game_mode: int
-    country_code: str
+    account_id: int
+    username: str
+    country_code: int
     privileges: int
     latitude: float
     longitude: float
