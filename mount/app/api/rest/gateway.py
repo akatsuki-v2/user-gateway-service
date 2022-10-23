@@ -3,7 +3,6 @@ from typing import Literal
 from uuid import UUID
 
 from app.common import json as jsonlib
-from app.common import logging
 from app.common import settings
 from app.common.context import Context
 from app.models.sessions import Session
@@ -16,6 +15,7 @@ from httpx._types import RequestContent
 from httpx._types import RequestData
 from httpx._types import RequestFiles
 from httpx._types import URLTypes
+from shared_modules import logger
 MethodTypes = Literal["POST", "PUT", "PATCH",
                       "GET", "HEAD", "DELETE", "OPTIONS"]
 
@@ -31,9 +31,9 @@ async def authenticate(ctx: Context, session_id: UUID | str) -> Session:
     )
     response_data = response.json()
     if response.status_code != 200:
-        logging.error("Failed to authenticate request",
-                      status_code=response.status_code,
-                      response_data=response_data)
+        logger.error("Failed to authenticate request",
+                     status_code=response.status_code,
+                     response_data=response_data)
         raise HTTPException(status_code=response.status_code,
                             detail=response_data)
 
@@ -54,7 +54,7 @@ async def forward_request(ctx: Context,
     if json is not None:
         json = jsonlib._default_processor(json)
 
-    logging.info("Forwarding HTTP request", method=method, url=url)
+    logger.info("Forwarding HTTP request", method=method, url=url)
 
     response = await ctx.http_client.request(method=method,
                                              content=content,
@@ -67,11 +67,11 @@ async def forward_request(ctx: Context,
                                              cookies=cookies)
 
     if response.status_code >= 500:
-        logging.error("Core service internal server error",
-                      method=method,
-                      url=url,
-                      status_code=response.status_code,
-                      response_data=response.json())  # TODO: aread?
+        logger.error("Core service internal server error",
+                     method=method,
+                     url=url,
+                     status_code=response.status_code,
+                     response_data=response.json())  # TODO: aread?
 
     return Response(content=response.content,
                     status_code=response.status_code,

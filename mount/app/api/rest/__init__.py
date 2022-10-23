@@ -2,27 +2,27 @@ from __future__ import annotations
 
 import time
 
-from app.common import logging
 from app.services import http_client
 from fastapi import FastAPI
 from fastapi import Request
 from fastapi.middleware.cors import CORSMiddleware
+from shared_modules import logger
 
 
 def init_http_client(api: FastAPI) -> None:
     @api.on_event("startup")
     async def startup_http_client() -> None:
-        logging.info("Starting up HTTP client")
+        logger.info("Starting up HTTP client")
         service_http_client = http_client.ServiceHTTPClient()
         api.state.http_client = service_http_client
-        logging.info("HTTP client started up")
+        logger.info("HTTP client started up")
 
     @api.on_event("shutdown")
     async def shutdown_http_client() -> None:
-        logging.info("Shutting down HTTP client")
+        logger.info("Shutting down HTTP client")
         await api.state.http_client.aclose()
         del api.state.http_client
-        logging.info("HTTP client shut down")
+        logger.info("HTTP client shut down")
 
 
 def init_middlewares(api: FastAPI) -> None:
